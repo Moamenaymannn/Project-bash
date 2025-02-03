@@ -1,0 +1,73 @@
+#!/bin/bash
+
+# Main Colors and Styles
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+BLUE='\033[0;34m'
+YELLOW='\033[1;33m'
+NC='\033[0m' # Transparent
+BOLD='\033[1m'
+
+
+function print_header() {
+    clear
+    echo -e "${BLUE}╔════════════════════════════════════════╗${NC}"
+    echo -e "${BLUE}║          ${BOLD}Bash Shell DBMS${NC}${BLUE}               ║${NC}"
+    echo -e "${BLUE}╚════════════════════════════════════════╝${NC}\n"
+}
+
+function print_menu_item() {
+    echo -e "${YELLOW}$1)${NC} $2"
+}
+
+function main_menu() {
+    while true; do
+        print_header
+        echo -e "${GREEN}═══════════ Main Menu ═══════════${NC}\n"
+        print_menu_item "1" "Create Database"
+        print_menu_item "2" "List Databases"
+        print_menu_item "3" "Connect To Database"
+        print_menu_item "4" "Drop Database"
+        print_menu_item "5" "Exit"
+        echo -e "\n${BLUE}═══════════════════════════════${NC}"
+        read -p "$(echo -e ${BOLD}Enter choice: ${NC})" choice
+        case $choice in
+            1) create_database ;;
+            2) list_databases ;;
+            3) connect_database ;;
+            4) drop_database ;;
+            5) echo -e "${GREEN}Goodbye!${NC}"; exit ;;
+            *) echo -e "${RED}Invalid choice${NC}" ;;
+        esac
+        read -n 1 -s -r -p "Press any key to continue..."
+    done
+}
+
+function table_menu() {
+    while true; do
+        print_header
+        echo -e "${GREEN}═══════════ Table Operations ═══════════${NC}\n"
+        print_menu_item "1" "Create Table"
+        print_menu_item "2" "List Tables"
+        print_menu_item "3" "Drop Table"
+        print_menu_item "4" "Insert into Table"
+        print_menu_item "5" "Select From Table"
+        print_menu_item "6" "Delete From Table"
+        print_menu_item "7" "Update Table"
+        print_menu_item "8" "Back to Main Menu"
+        echo -e "\n${BLUE}══════════════════════════════════════${NC}"
+        read -p "$(echo -e ${BOLD}Enter choice: ${NC})" choice
+        case $choice in
+            1) create_table ;;
+            2) list_tables ;;
+            3) drop_table ;;
+            4) insert_record ;;
+            5) select_records ;;
+            6) delete_record ;;
+            7) update_record ;;
+            8) return ;;
+            *) echo -e "${RED}Invalid choice${NC}" ;;
+        esac
+        read -n 1 -s -r -p "Press any key to continue..."
+    done
+}
