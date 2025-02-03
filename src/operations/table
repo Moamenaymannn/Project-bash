@@ -1,0 +1,59 @@
+#!/bin/bash
+
+
+function create_table() {
+    read -p "Enter table name: " table_name
+    if ! validate_name "$table_name"; then
+        error_msg "Invalid table name"
+        return
+    fi
+
+    if [ -f "$DB_DIR/$CURRENT_DB/$table_name" ]; then
+        error_msg "Table already exists"
+        return
+    fi
+
+    read -p "Enter number of columns: " col_count
+    declare -a col_names
+    declare -a col_types
+    declare -a is_pk
+    pk_set=false
+
+    for ((i=0; i<col_count; i++)); do
+        read -p "Enter column $((i+1)) name: " col_names[i]
+        
+        if [ "$pk_set" = false ]; then
+            read -p "Is this column primary key? (y/n): " pk
+            if [[ $pk == "y" ]]; then
+                is_pk[i]=1
+                pk_set=true
+                col_types[i]="integer"
+                echo "Primary key column must be integer type"
+                continue
+            else
+                is_pk[i]=0
+            fi
+        else
+            is_pk[i]=0
+        fi
+        
+        read -p "Enter column $((i+1)) type (string/integer/float): " col_types[i]
+    done
+
+    echo "${col_names[*]}|${col_types[*]}|${is_pk[*]}" > "$DB_DIR/$CURRENT_DB/$table_name"
+    success_msg "Table created successfully"
+}
+
+function list_tables() {
+    ls "$DB_DIR/$CURRENT_DB"
+}
+
+function drop_table() {
+    read -p "Enter table name: " table_name
+    if [ -f "$DB_DIR/$CURRENT_DB/$table_name" ]; then
+        rm "$DB_DIR/$CURRENT_DB/$table_name"
+        success_msg "Table dropped successfully"
+    else
+        error_msg "Table does not exist"
+    fi
+}
