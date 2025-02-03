@@ -7,7 +7,7 @@ A simple database management system implemented in Bash. This project provides f
 ## Project Structure
 
 ```
-bash-dbms
+Project-bash
 ├── src
 │   ├── main.sh          # Entry point of the application
 │   ├── config.sh        # Configuration variables
@@ -38,7 +38,7 @@ bash-dbms
 
    ```bash
    git clone <repository-url>
-   cd bash-dbms
+   cd Project-bash
    ```
 
 2. Run the installation script:
