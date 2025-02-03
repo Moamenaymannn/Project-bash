@@ -1,0 +1,22 @@
+#!/bin/bash
+
+DB_DIR="./data/databases"
+
+# Colors
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+BLUE='\033[0;34m'
+NC='\033[0m'
+
+# Message functions
+success_msg() {
+    echo -e "${GREEN}✓ $1${NC}"
+}
+
+error_msg() {
+    echo -e "${RED}✗ $1${NC}"
+}
+
+result_msg() {
+    echo -e "${BLUE}➜ $1${NC}"
+}
