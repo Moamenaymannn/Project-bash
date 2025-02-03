@@ -1,0 +1,39 @@
+#!/bin/bash
+
+function create_database() {
+    read -p "Enter database name: " db_name
+    if validate_name "$db_name"; then
+        if [ ! -d "$DB_DIR/$db_name" ]; then
+            mkdir -p "$DB_DIR/$db_name"
+            success_msg "Database created successfully"
+        else
+            error_msg "Database already exists"
+        fi
+    else
+        error_msg "Invalid database name"
+    fi
+}
+
+function list_databases() {
+    ls "$DB_DIR"
+}
+
+function connect_database() {
+    read -p "Enter database name: " db_name
+    if [ -d "$DB_DIR/$db_name" ]; then
+        export CURRENT_DB="$db_name"
+        table_menu
+    else
+        error_msg "Database does not exist"
+    fi
+}
+
+function drop_database() {
+    read -p "Enter database name: " db_name
+    if [ -d "$DB_DIR/$db_name" ]; then
+        rm -r "$DB_DIR/$db_name"
+        success_msg "Database dropped successfully"
+    else
+        error_msg "Database does not exist"
+    fi
+}
