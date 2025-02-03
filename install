@@ -1,5 +1,5 @@
 #!/bin/bash
-chmod +x src/main.sh
-chmod +x src/utils/*.sh
-chmod +x src/operations/*.sh
+chmod +x src/main
+chmod +x src/utils/*
+chmod +x src/operations/*
 mkdir -p data/databases

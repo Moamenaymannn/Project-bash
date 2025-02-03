@@ -9,18 +9,18 @@ A simple database management system implemented in Bash. This project provides f
 ```
 Project-bash
 ├── src
-│   ├── main.sh          # Entry point of the application
-│   ├── config.sh        # Configuration variables
+│   ├── main          # Entry point of the application
+│   ├── config        # Configuration variables
 │   ├── utils            # Utility scripts
-│   │   ├── menu.sh      # Menu display functions
-│   │   └── validators.sh # Input validation functions
+│   │   ├── menu      # Menu display functions
+│   │   └── validators # Input validation functions
 │   └── operations       # Database operations
-│       ├── database.sh  # Database management functions
-│       ├── table.sh     # Table management functions
-│       └── record.sh    # Record management functions
+│       ├── database  # Database management functions
+│       ├── table     # Table management functions
+│       └── record    # Record management functions
 ├── data
 │   └── databases        # Directory for database files
-├── install.sh           # Setup script
+├── install           # Setup script
 ├── .gitignore           # Git ignore file
 └── README.md            # Project documentation
 ```
@@ -43,7 +43,7 @@ Project-bash
 
 2. Run the installation script:
    ```bash
-   ./install.sh
+   ./install
    ```
 
 ## Usage
@@ -51,7 +51,7 @@ Project-bash
 To start the application, run:
 
 ```bash
-./src/main.sh
+./src/main
 ```
 
 Follow the on-screen instructions to navigate through the database management system.
