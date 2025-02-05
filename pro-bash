@@ -389,3 +389,20 @@ insert_into_table() {
   fi
   prompt_next_action "db_menu $db_name"
 }
+
+check_primary_key() {
+  local db_name=$1
+  local table_name=$2
+  local primary_key=$3
+  local value=$4
+
+  while IFS=, read -r line; do
+    key_value=$(echo "$line" | cut -d',' -f"$((primary_key + 1))")
+    if [ "$key_value" == "$value" ]; then
+      return 1
+    fi
+  done < "$DB_PATH/$db_name/$table_name"
+  return 0
+}
+
+main_menu
