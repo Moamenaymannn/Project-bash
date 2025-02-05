@@ -1,0 +1,91 @@
+#! /usr/bin/bash
+
+#awk '{print NR ": " $0}' script.sh > script_with_line_numbers.sh >> for line number
+DB_PATH="./Database"
+
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[0;33m'
+RESET='\033[0m'
+
+print_header() {
+  echo -e "${YELLOW}===============================${RESET}"
+  echo -e "$1"
+  echo -e "${YELLOW}===============================${RESET}"
+}
+
+error_message() {
+  echo -e "${RED}Error: $1${RESET}"
+}
+
+success_message() {
+  echo -e "${GREEN}$1${RESET}"
+}
+
+prompt_next_action() {
+
+  echo "1. Previous Step"
+  echo "2. Return to Main Menu"
+  read -p "Enter your choice: " choice
+  case $choice in
+    1) $1 ;;
+    2) main_menu ;;
+    *) error_message "Invalid choice. Returning to Main Menu..." && main_menu ;;
+  esac
+}
+
+validate_name() {
+clear
+  local trimmed_name="${1//[[:space:]]/}"
+
+  if [[ -z "$trimmed_name" || "$1" =~ [^a-zA-Z0-9_] ]]; then
+    error_message "Invalid name. Only alphanumeric characters and underscores are allowed. No spaces are permitted."
+    return 1
+  fi
+  return 0
+}
+
+
+main_menu(){ 
+ clear
+if [ ! -d "$DB_PATH" ]; then
+  error_message "Database Directory not found!"
+  print_header "Do you want to:"
+  echo "1. Create Database Directory in Current Location ($PWD)"
+  echo "2. Specify a Custom Path"
+  echo "3. Exit"
+  echo -e "${YELLOW}===============================${RESET}"
+  read -p "Enter your choice: " sub_choice
+  clear
+  case $sub_choice in
+    1) mkdir -p "$DB_PATH" && success_message "Database Directory Created in $PWD!" ;;
+    2) 
+       read -p "Enter the path: " custom_path
+       DB_PATH="$custom_path"
+       mkdir -p "$DB_PATH" && success_message "Database Directory Created at $DB_PATH!" ;;
+    3) exit ;;
+    *) error_message "Invalid choice, exiting program..." && main_menu ;;
+  esac
+fi
+
+  print_header "Bash Shell DBMS"
+  echo "1. Create Database"
+  echo "2. List Databases"
+  echo "3. Connect to Database"
+  echo "4. Drop Database"
+  echo "5. Exit"
+  echo -e "${YELLOW}===============================${RESET}"
+  read -p "Enter your choice: " choice
+  
+  case $choice in
+  1) clear; create_database ;;
+  2) clear; list_databases ;;
+  3) clear; connect_to_databse ;;
+  4) clear; drop_database ;;
+  5) exit ;;
+  *) echo -e " ${RED}Invalid Choice, Please try again! ${RESET}"
+     read -p "press [Enter] to return Menu" 
+     main_menu ;;
+  esac
+  }
+
