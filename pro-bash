@@ -197,5 +197,56 @@ clear
     *) error_message "Invalid choice, please try again!" && db_menu "$db_name" ;;
   esac
 }
+create_table() {
+  clear
+  local db_name=$1
+
+  print_header "Create Table in Database: $db_name"
+  read -p "Enter Table Name: " table_name
+  validate_name "$table_name" || create_table "$db_name"
+  local table_path="$DB_PATH/$db_name/$table_name.txt"
+
+  if [ -f "$table_path" ]; then
+    error_message "Table '$table_name' already exists!"
+  else
+  
+    read -p "Enter Columns (comma-separated): " columns
+    IFS=',' read -r -a columns_array <<< "$columns"
+
+    declare -a data_types
+
+  
+    for column in "${columns_array[@]}"; do
+      echo "Select Data Type for '$column':"
+      echo "1. Int"
+      echo "2. Char"
+      echo "3. Boolean"
+      read -p "Enter your choice (1/2/3): " dtype_choice
+
+      case $dtype_choice in
+        1) data_types+=("Int") ;;
+        2) data_types+=("Char") ;;
+        3) data_types+=("Boolean") ;;
+        *) error_message "Invalid choice, defaulting to Char"; data_types+=("Char") ;;
+      esac
+    done
+
+    
+    echo "Available Columns: ${columns_array[@]}"
+    read -p "Enter the column name you want to set as Primary Key: " pk_column
+    if [[ ! " ${columns_array[@]} " =~ " ${pk_column} " ]]; then
+      error_message "Invalid column name for primary key!"
+      create_table "$db_name"
+    fi
+
+
+    echo "${columns_array[@]}" | sed 's/ /,/g' > "$table_path.meta"
+    echo "${data_types[@]}" | sed 's/ /,/g' > "$table_path.datatypes"
+
+    touch "$table_path"
+    success_message "Table '$table_name' created successfully with columns: ${columns_array[@]} and types: ${data_types[@]}"
+  fi
+  prompt_next_action "db_menu $db_name"
+}
 
 
