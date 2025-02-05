@@ -285,3 +285,107 @@ drop_table() {
  prompt_next_action "db_menu $db_name"
 }
 
+insert_into_table() {
+  clear
+  local db_name=$1
+  print_header "Insert Data into Table"
+
+  echo "Available Tables in Database $db_name:"
+  tables=($(ls "$DB_PATH/$db_name" | grep -vE '\.meta$|\.datatypes$'))
+  if [ ${#tables[@]} -eq 0 ]; then
+    error_message "No tables found in database '$db_name'."
+    prompt_next_action "db_menu $db_name"
+  else
+    for i in "${!tables[@]}"; do
+      echo "$((i + 1)). ${tables[$i]}"
+    done
+    read -p "Enter Table Name to insert data into: " table_name
+
+    echo -e "${YELLOW}===============================${RESET}"
+    if [[ ! " ${tables[@]} " =~ " ${table_name} " ]]; then
+      error_message "Table '$table_name' does not exist in database '$db_name'."
+      insert_into_table "$db_name"
+    fi
+
+    local table_path="$DB_PATH/$db_name/$table_name"
+    columns=$(cat "$table_path.meta")
+    data_types=$(cat "$table_path.datatypes")
+    echo "Columns: $columns"
+    echo "Data Types: $data_types"
+    echo -e "${YELLOW}===============================${RESET}"
+
+   
+    echo "Current Table Data:"
+    if [ -s "$table_path" ]; then
+      cat "$table_path"
+    else
+      echo "No data available yet."
+    fi
+    echo -e "${YELLOW}===============================${RESET}"
+    
+    while true; do
+      read -p "Enter Values (comma-separated): " values
+      IFS=',' read -r -a values_array <<< "$values"
+      IFS=',' read -r -a column_array <<< "$columns"
+      IFS=',' read -r -a data_types_array <<< "$data_types"
+      
+      if [ "${#values_array[@]}" -ne "${#column_array[@]}" ]; then
+        error_message "The number of values does not match the number of columns!"
+        continue
+      fi
+
+ 
+      primary_key_index=$(grep -n "PK" <<< "${column_array[*]}" | cut -d: -f1)
+      if [ -z "$primary_key_index" ]; then
+        error_message "No primary key defined in table metadata!"
+        return
+      fi
+
+      primary_key_index=$((primary_key_index - 1))
+      primary_key_value="${values_array[$primary_key_index]}"
+
+  
+      if ! check_primary_key "$db_name" "$table_name" "$primary_key_index" "$primary_key_value"; then
+        error_message "Duplicate primary key value '$primary_key_value'!"
+        echo "Please re-enter the values:"
+        continue
+      fi
+
+      for i in "${!values_array[@]}"; do
+        value="${values_array[$i]}"
+        data_type="${data_types_array[$i]}"
+        
+        case "$data_type" in
+          "Int")
+            if ! [[ "$value" =~ ^-?[0-9]+$ ]]; then
+              error_message "Value '$value' for column '${column_array[$i]}' must be an integer!"
+              continue 2
+            fi
+            ;;
+          "Char")
+            if [[ ! "$value" =~ ^[A-Za-z]+$ ]]; then
+              error_message "Value '$value' for column '${column_array[$i]}' must be a string!"
+              continue 2
+            fi
+            ;;
+          "Boolean")
+            if [[ "$value" != "true" && "$value" != "false" ]]; then
+              error_message "Value '$value' for column '${column_array[$i]}' must be either true or false!"
+              continue 2
+            fi
+            ;;
+          *)
+            error_message "Unknown Data Type!"
+            continue 2
+            ;;
+        esac
+      done
+
+      echo "$values" >> "$table_path"
+      clear
+      success_message "Data inserted into '$table_name'."
+      break
+    done
+  fi
+  prompt_next_action "db_menu $db_name"
+}
