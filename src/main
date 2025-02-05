@@ -1,9 +1,0 @@
-#!/bin/bash
-source ./src/config
-source ./src/utils/menu
-source ./src/utils/validators
-source ./src/operations/database
-source ./src/operations/table
-source ./src/operations/record
-
-main_menu

@@ -1,5 +1,0 @@
-#!/bin/bash
-chmod +x src/main
-chmod +x src/utils/*
-chmod +x src/operations/*
-mkdir -p data/databases
