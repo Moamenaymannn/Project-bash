@@ -89,3 +89,60 @@ fi
   esac
   }
 
+
+create_database(){
+  print_header "Create Database"
+  read -p "Enter Database Name: " db_name
+  validate_name "$db_name" || create_database
+
+  if [ -d "$DB_PATH/$db_name" ]; then
+    error_message "Database '$db_name' already exists!"
+  else
+    mkdir -p "$DB_PATH/$db_name"
+    success_message "Database '$db_name' created successfully!"
+  fi
+  
+  echo "1. Create Another Database"
+  echo "2. Main menu"
+  echo -e "${YELLOW}===============================${RESET}"
+  read -p "Enter your choice: " choice
+  
+  case $choice in
+  1) clear; create_database ;;
+  2) clear; main_menu ;;
+  *) error_message "Invalid Choice, Please try again!" && main_menu ;;
+  esac
+   }
+   
+list_databases() {
+clear
+  print_header "Available Databases"
+ if [ -z "$(ls -A "$DB_PATH" 2>/dev/null)" ]; then
+    error_message "No Databases Found!"
+  echo "1. Create Database"
+  echo "2. Main menu"
+  echo -e "${YELLOW}===============================${RESET}"
+  read -p "Enter your choice: " choice
+  
+  case $choice in
+  1) clear; create_database ;;
+  2) clear; main_menu ;;
+  esac
+  
+else
+    echo -e "${GREEN}"
+    ls "$DB_PATH"
+    echo -e "${RESET}" 
+  fi
+  
+  echo "1. Connect to Database"
+  echo "2. Main menu"
+  echo -e "${YELLOW}===============================${RESET}"
+  read -p "Enter your choice: " choice
+  
+  case $choice in
+  1) clear; connect_to_databse ;;
+  2) clear; main_menu ;;
+  esac
+}
+
